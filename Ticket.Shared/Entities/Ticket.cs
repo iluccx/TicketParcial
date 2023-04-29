@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Ticket.Shared.Entities
 {
@@ -13,12 +7,13 @@ namespace Ticket.Shared.Entities
         public int Id { get; set; }
 
         [Display(Name = "Fecha")]
-        public string Name { get; set; } = null!;
+        public string? Date { get; set; } = null!;
 
         [Display(Name = "Usada")]
         public bool Used { get; set; } = false;
 
         [Display(Name = "Porteria")]
-        public string Zone { get; set; } = null!;
+        [MaxLength(50, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
+        public string? Zone { get; set; } = null!;
     }
 }

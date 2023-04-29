@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ticket.Shared.Entities;
     
 namespace Ticket.API.Data
 {
@@ -9,6 +10,11 @@ namespace Ticket.API.Data
 
         }
 
-        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Shared.Entities.Ticket> Tickets { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

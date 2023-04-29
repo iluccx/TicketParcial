@@ -1,0 +1,74 @@
+﻿@page "/ticketinfo"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<PageTitle>Ticket Validation</PageTitle>
+
+@if (Ticket is null)
+{
+    <div class="spinner"/>
+}
+else
+{
+    <p>@Ticket.Id</p>
+    <p>@Ticket.Zone</p>
+    <p>@Ticket.Date</p>
+    <p>@Ticket.Used</p>
+
+}
+
+@code {
+    //private Ticket? ticket; <a @onclick=@(() => Validate(ticketId))>Buscar</a>
+    private int ticketId;
+    private EditContext editContext = null!;
+    public List<Ticket>? TicketList { get; set; }
+
+    public Ticket? Ticket { get; set; } = null!;
+    public Ticket Country { get; set; } = null!;
+    //[CascadingParameter] <InputText class="form-control" />
+    //IModalService Modal { get; set; } = default!;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    private async Task Validate(int ticketId)
+    {
+        var responseHTTP = await repository.Get<Ticket>($"/api/ticket/{ticketId}");
+
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("ticket");
+            }
+            else
+            {
+                var messageError = await responseHTTP.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", messageError, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            ShowModal(1);
+        }
+
+    }
+
+    private async Task ShowModal(int id = 0)
+    {
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var responseHTTP = await repository.Get<Ticket>($"/api/ticket/{ticketId}");
+        var responseHTTP = await repository.Get<Ticket>($"/api/ticket/1");
+        Ticket = responseHTTP.Response!;
+
+      
+    }
+
+
+}

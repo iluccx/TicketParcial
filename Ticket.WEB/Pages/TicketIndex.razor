@@ -1,0 +1,97 @@
+﻿@page "/ticket"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Validad Id del Ticket</h3>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Id Boleto</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" id="ticketId" @bind-value="@ticketId" placeholder="Digite el id del boleto" />
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success" @onclick="Validate"><i class="fa fa-pencil"></i> Validar</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-2"></div>
+</div>
+
+@code {
+    private int ticketId;
+    public Ticket? Ticket;
+
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
+
+    private async Task Validate()
+    {
+        var responseHTTP = await repository.Get<Ticket>($"api/ticket/{ticketId}");
+
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                await sweetAlertService.FireAsync("Error", "Boleta no válida, no existe", SweetAlertIcon.Error);
+                return;
+            }
+            else
+            {
+                var messageError = await responseHTTP.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", messageError, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            Ticket = responseHTTP.Response;
+            if (Ticket.Used)
+            {
+                await sweetAlertService.FireAsync("Error", $"La Boleta ya fue usada: Hora de uso: {Ticket.Date} Porteria: {Ticket.Zone}", SweetAlertIcon.Error);
+                return;
+            }
+            else
+            {
+                navigationManager.NavigateTo($"/updateticket/{Ticket.Id}");
+                //ShowModal(Ticket.Id);
+            }
+
+        }
+    }
+
+    private async Task ShowModal(int id)
+    {
+        IModalReference modalReference;
+
+        modalReference = Modal.Show<UpdateTicket>(string.Empty, new ModalParameters().Add("Id", id));
+
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync(int page = 1)
+    {
+        try
+        {
+            
+        }
+        catch (Exception ex)
+        {
+            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
+    }
+
+    
+
+}

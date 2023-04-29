@@ -7,7 +7,7 @@ namespace Ticket.Shared.Entities
         public int Id { get; set; }
 
         [Display(Name = "Fecha")]
-        public string? Date { get; set; } = null!;
+        public DateTime? Date { get; set; } = null!;
 
         [Display(Name = "Usada")]
         public bool Used { get; set; } = false;

@@ -14,7 +14,7 @@ else
     <div class="row">
         <div class="col-2"></div>
         <div class="col-8">
-            <div class="card">
+            <div class="card shadow p-3 mb-5 bg-white rounded">
                 <div class="card-header">
                     <h3>Registrar Entrada</h3>
                 </div>
@@ -35,7 +35,11 @@ else
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Fue usada</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" @bind-value="@ticket.Used" />
+                                
+                                <select class="form-select" @onchange="SelectChangedAsync">
+                                    <option value="false">Falso</option>
+                                    <option value="true">Verdadero</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -46,8 +50,9 @@ else
                         </div>
 
                     </div>
-                    <button class="btn btn-success" @onclick="Save"><i class="fa fa-pencil"></i> Guardar</button>
-                    <button class="btn btn-info" @onclick="Return"><span class="oi oi-list-rich" aria-hidden="true"></span> Regresar</button>
+                    <br>
+                    <button class="btn btn-success" @onclick="Save"><i class="oi oi-check" /> Guardar</button>
+                    <button class="btn btn-secondary" @onclick="Return"><i class="oi oi-arrow-thick-left" /> Regresar</button>
                 </div>
             </div>
         </div>
@@ -55,9 +60,10 @@ else
     </div>
 }
 
+
 @code {
     private Ticket? ticket;
-
+    //<input type="text" class="form-control" @bind-value="@ticket.Used" />
     [Parameter]
     public int Id { get; set; }
 
@@ -95,11 +101,33 @@ else
         }
 
         //await BlazoredModal.CloseAsync(ModalResult.Ok());
+
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.TopEnd,
+                ShowConfirmButton = true,
+                Timer = 4000
+            });
         Return();
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Los cambios se guardaron correctamente");
+        
     }
 
     private void Return()
     {
         navigationManager.NavigateTo("/ticket");
+    }
+
+    private async Task SelectChangedAsync(ChangeEventArgs e)
+    {
+        if (e.Value!.ToString().Equals("true"))
+        {
+            ticket.Used = true;
+        }
+        else
+        {
+            ticket.Used = false;
+        }
     }
 }

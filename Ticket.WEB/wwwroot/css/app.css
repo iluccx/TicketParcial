@@ -179,3 +179,30 @@ a, .btn-link {
 .sidebar[b-baadlfonps] {
     background-image: linear-gradient(180deg, rgb(204 128 31) 0%, #064728 70%) !important;
 }
+
+body {
+
+}
+
+
+.btn-primary {
+    color: #fff;
+    background-color: #f99e3e !important;
+    border-color: #f8850c !important;
+}
+
+.btn-outline-primary {
+    color: #f99e3e !important;
+    border-color: #f8850c !important;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #f99e3e !important;
+    border-color: #f8850c !important;
+}
+
+.sidebar[b-6t0qtzdoqu] {
+    background-image: linear-gradient(180deg, rgb(175 175 175) 0%, #470606 70%) !important;
+}
